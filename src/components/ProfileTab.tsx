@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Settings, Award, Activity, ShieldCheck, ChevronRight, Loader2, Sparkles, X, HeartPulse, Scale, Ruler, Map as MapIcon } from 'lucide-react';
+import { Settings, Award, Activity, ShieldCheck, ChevronRight, Loader2, Sparkles, X, Scale, Ruler, MapPin, Calendar, Flame } from 'lucide-react';
 import { generateWeeklyReport } from '../services/aiService';
 
 const MOCK_STATS = {
@@ -10,16 +10,21 @@ const MOCK_STATS = {
   creditScore: 98,
   totalGames: 24,
   distance: 32.5,
-  height: 178,
-  weight: 70,
-  heartRate: 62,
-  bmi: 22.1
+  height: 183,
+  weight: 80
 };
+
+const MOCK_RECENT_ACTIVITIES = [
+  { id: 1, date: '今天 19:00', sport: '篮球', duration: '2小时', distance: '3.2km', location: '东城体育公园篮球场', calories: 850 },
+  { id: 2, date: '昨天 14:00', sport: '飞盘', duration: '1.5小时', distance: '4.5km', location: '绿茵飞盘营地', calories: 620 },
+  { id: 3, date: '周三 20:00', sport: '篮球', duration: '2小时', distance: '2.8km', location: '星光体育馆', calories: 800 },
+];
 
 export default function ProfileTab() {
   const [report, setReport] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [showStatsModal, setShowStatsModal] = useState(false);
 
   const handleGenerateReport = async () => {
     setIsGenerating(true);
@@ -59,7 +64,10 @@ export default function ProfileTab() {
 
       <div className="flex-1 overflow-y-auto px-4 -mt-4">
         {/* Stats Cards */}
-        <div className="bg-white rounded-2xl p-4 shadow-sm mb-4 flex justify-between items-center border border-gray-100">
+        <button 
+          onClick={() => setShowStatsModal(true)}
+          className="w-full bg-white rounded-2xl p-4 shadow-sm mb-4 flex justify-between items-center border border-gray-100 hover:bg-gray-50 transition-colors"
+        >
           <div className="text-center flex-1">
             <div className="text-2xl font-bold text-gray-900">{MOCK_STATS.totalGames}</div>
             <div className="text-xs text-gray-500 mt-1">总场次</div>
@@ -74,7 +82,7 @@ export default function ProfileTab() {
             <div className="text-2xl font-bold text-gray-900">{MOCK_STATS.distance}</div>
             <div className="text-xs text-gray-500 mt-1">本周距离(km)</div>
           </div>
-        </div>
+        </button>
 
         {/* Physical Data */}
         <div className="bg-white rounded-2xl p-4 shadow-sm mb-4 border border-gray-100">
@@ -95,20 +103,6 @@ export default function ProfileTab() {
               <div>
                 <div className="text-xs text-gray-500">体重</div>
                 <div className="font-bold text-gray-900">{MOCK_STATS.weight} <span className="text-xs font-normal">kg</span></div>
-              </div>
-            </div>
-            <div className="bg-gray-50 p-3 rounded-xl flex items-center">
-              <HeartPulse size={18} className="text-red-500 mr-3" />
-              <div>
-                <div className="text-xs text-gray-500">静息心率</div>
-                <div className="font-bold text-gray-900">{MOCK_STATS.heartRate} <span className="text-xs font-normal">bpm</span></div>
-              </div>
-            </div>
-            <div className="bg-gray-50 p-3 rounded-xl flex items-center">
-              <Activity size={18} className="text-green-500 mr-3" />
-              <div>
-                <div className="text-xs text-gray-500">BMI</div>
-                <div className="font-bold text-gray-900">{MOCK_STATS.bmi} <span className="text-xs font-normal">标准</span></div>
               </div>
             </div>
           </div>
@@ -171,6 +165,64 @@ export default function ProfileTab() {
           </button>
         </div>
       </div>
+
+      {/* Stats Modal */}
+      {showStatsModal && (
+        <div className="absolute inset-0 bg-gray-50 z-50 flex flex-col animate-in slide-in-from-bottom-full duration-300">
+          <div className="bg-white px-4 pt-12 pb-4 shadow-sm flex justify-between items-center sticky top-0">
+            <h2 className="text-xl font-bold text-gray-900">运动数据详情</h2>
+            <button onClick={() => setShowStatsModal(false)} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+              <X size={24} className="text-gray-600" />
+            </button>
+          </div>
+          
+          <div className="flex-1 overflow-y-auto p-4 space-y-4">
+            {MOCK_RECENT_ACTIVITIES.map(activity => (
+              <div key={activity.id} className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+                <div className="flex justify-between items-start mb-3">
+                  <div className="flex items-center space-x-2">
+                    <span className="bg-indigo-100 text-indigo-700 text-xs px-2 py-1 rounded-md font-bold">
+                      {activity.sport}
+                    </span>
+                    <span className="text-gray-500 text-xs font-medium flex items-center">
+                      <Calendar size={12} className="mr-1" />
+                      {activity.date}
+                    </span>
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-3 gap-2 mb-4">
+                  <div className="bg-gray-50 rounded-xl p-2 text-center">
+                    <div className="text-xs text-gray-500 mb-1">时长</div>
+                    <div className="font-bold text-gray-900 text-sm">{activity.duration}</div>
+                  </div>
+                  <div className="bg-gray-50 rounded-xl p-2 text-center">
+                    <div className="text-xs text-gray-500 mb-1">距离</div>
+                    <div className="font-bold text-gray-900 text-sm">{activity.distance}</div>
+                  </div>
+                  <div className="bg-gray-50 rounded-xl p-2 text-center">
+                    <div className="text-xs text-gray-500 mb-1">消耗</div>
+                    <div className="font-bold text-orange-500 text-sm flex items-center justify-center">
+                      <Flame size={14} className="mr-0.5" />
+                      {activity.calories}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+                  <div className="flex items-center text-gray-600 text-sm font-medium">
+                    <MapPin size={16} className="mr-1.5 text-indigo-500" />
+                    {activity.location}
+                  </div>
+                  <button className="text-indigo-600 text-xs font-bold bg-indigo-50 px-3 py-1.5 rounded-lg hover:bg-indigo-100 transition-colors">
+                    查看地图
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Settings Modal */}
       {showSettings && (

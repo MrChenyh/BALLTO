@@ -7,6 +7,8 @@ export interface Venue {
   image: string;
   crowdLevel: 'Low' | 'Medium' | 'High';
   price: string;
+  lat?: number;
+  lng?: number;
 }
 
 export interface Game {
