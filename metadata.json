@@ -1,0 +1,8 @@
+{
+  "name": "BALLTO 运动社交",
+  "description": "基于 LBS 与大模型技术的 AI 赋能运动社交平台，提供找场馆、智能约球、AI 运动瞬间生成及个性化运动助理服务。",
+  "requestFramePermissions": [
+    "geolocation",
+    "camera"
+  ]
+}
